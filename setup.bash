@@ -27,5 +27,5 @@ npm install bcrypt
 # for JWT https://www.npmjs.com/package/jsonwebtoken
 npm install jsonwebtoken
 
-nodejs ftd.js PORT_NUMBER
+node ftd.js PORT_NUMBER
 # http://142.1.200.148:PORT_NUMBER

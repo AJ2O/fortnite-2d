@@ -1,3 +1,4 @@
+_serverHost = "localhost";
 stage = null;
 _gameState = null;
 _gameView = null;
@@ -11,7 +12,6 @@ _playerID = "";
 _gameTime = 0;
 _gameIntervalTime = 40;
 _gameScore = 1;
-_serverHost = "localhost";
 
 // Player controls
 var controlLockMove = false;
