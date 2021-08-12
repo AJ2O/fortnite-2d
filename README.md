@@ -1,4 +1,5 @@
 # Fortnite 2D
+Made in collaboration with [@jaskarnmankoo](https://github.com/jaskarnmankoo).
 
 Fortnite 2D is a top-down shooter that works similar to the popular
 Fortnite video game. It has a variety of weapons, a loot drop
@@ -13,3 +14,5 @@ to wherever you run the game server.
 To start the server, run `ServerCode/setup.bash` on your game server.
 
 To start the client, run `setup.bash` on your client server.
+
+Happy playing!
