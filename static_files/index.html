@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite 2D</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" />
+
+    <script src="lib/react.development.js"></script>
+    <script src="lib/react-dom.development.js"></script>
+    <script src="lib/material-ui.development.js"></script>
+    <script src="lib/babel.min.js"></script>
+    <script src="lib/jquery-3.3.1.min.js"></script>
+    <script src="lib/game.js"></script>
+    <script src="lib/gameobjects.js"></script>
+    <script src="lib/gameView.js"></script>
+    <script src="client.js"></script>
+    <script src="lib/controller.js" ></script>
+    <script type="text/babel" src="src/required.jsx"></script>
+    <script type="text/babel" src="src/default.jsx"></script>
+    <script type="text/babel" src="src/login.jsx"></script>
+    <script type="text/babel" src="src/registration.jsx"></script>
+    <script type="text/babel" src="src/welcome.jsx"></script>
+    <script type="text/babel" src="src/game.jsx"></script>
+    <script type="text/babel" src="src/update.jsx"></script>
+    <script type="text/babel" src="src/delete.jsx"></script>
+    <script type="text/babel">
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.handleRegistrationClick = this.handleRegistrationClick.bind(this);
+                this.handleLoginClick = this.handleLoginClick.bind(this);
+                this.handleBackToLoginClick = this.handleBackToLoginClick.bind(this);
+                this.handleRegisterClick = this.handleRegisterClick.bind(this);
+                this.handlePlayGameClick=this.handlePlayGameClick.bind(this);
+                this.handleLogoutClick=this.handleLogoutClick.bind(this);
+                this.handleUpdateAccountClick=this.handleUpdateAccountClick.bind(this);
+                this.handleUpdateClick=this.handleUpdateClick.bind(this);
+                this.handleDeleteAccountClick=this.handleDeleteAccountClick.bind(this);
+                this.handleDeleteClick=this.handleDeleteClick.bind(this);
+                this.handleBackToWelcomeClick=this.handleBackToWelcomeClick.bind(this);
+                this.handleLeaveGameClick=this.handleLeaveGameClick.bind(this);
+                this.state = {
+                    login: true,
+                    registration: false,
+                    welcome: false,
+                    update: false,
+                    delete: false,
+                    game: false,
+		            error: false, 
+                    username: "",
+                    password: "",
+                    email: "",
+                    birthday: "1997-01-01",
+                    year: "",
+                    lecture: "LEC101",
+                    score: 1,
+                    errorMessage: "",
+                    top10: "",
+                };
+            }
+
+            handleUsernameChange = (e) =>
+                this.setState({
+                    username: e.target.value,
+            });
+
+            handlePasswordChange = (e) =>
+                this.setState({
+                    password: e.target.value,
+            });
+
+            handleEmailChange = (e) =>
+                this.setState({
+                    email: e.target.value,
+            });
+
+            handleBirthdayChange = (e) =>
+                this.setState({
+                    birthday: e.target.value,
+            });
+
+            handleYearChange = (e) =>
+                this.setState({
+                    year: e.target.value,
+            });
+
+            handleLectureChange = (e) =>
+                this.setState({
+                    lecture: e.target.value,
+            });
+
+            stay(at, errMsg) {
+                this.setState({ [at]: true, errorMessage: errMsg, });
+            }
+
+	        switch(from, to, errMsg) {
+                this.setState({ [from]: false, [to]: true, errorMessage: errMsg,});
+            }
+
+            topTen() {
+                const self = this;
+
+                var ret = function(result, values) {
+                    if(result) {
+                        self.state.top10 = values;
+                    } else {
+                        self.state.top10.push("error");
+                    }
+                }
+
+                retrieveTopTen(ret);
+            }
+
+            handleScore() {
+                const data = {
+                    user: this.state.username,
+                    pass: this.state.password,
+                    score: this.state.score,
+                };
+                
+                const self = this;
+                const newScore = _gameScore;
+                
+                var log = function(){
+                    self.setState({
+                        login: false,
+                        registration: false,
+                        welcome: true,
+                        update: false,
+                        delete: false,
+                        game: false,
+                        error: false,
+                        score: newScore,
+                    });
+                }
+                updateScore(data, log);
+            }
+
+            handleRegistrationClick() {
+                this.switch("login", "registration", "");
+            }
+
+	        handleLoginClick() {
+                this.topTen();
+
+                const data = {
+                    user: this.state.username,
+                    pass: this.state.password,
+                };
+
+                const self = this;
+
+                var log = function(result, values) {
+                    if (result) {
+                        self.state.email = values.email;
+                        self.state.birthday = values.birthday;
+                        self.state.year = values.year;
+                        self.state.lecture = values.lecture;
+                        self.switch("login", "welcome", "");
+                    } else {
+                        self.stay("login", "Your username or password is incorrect!");
+                    }
+		        }
+
+                login(data, log);
+                self.switch("login", "error", "");
+            }
+
+            handleBackToLoginClick() {
+                this.switch("registration", "login", "");
+            }
+
+            handleRegisterClick() {
+                const data = {
+                    user: this.state.username,
+                    pass: this.state.password,
+                    email: this.state.email,
+                    birthday: this.state.birthday,
+                    year: this.state.year,
+                    lecture: this.state.lecture,
+                };
+
+                const self = this;
+
+                var reg = function(result) {
+                    if (result) {
+                        self.switch("registration", "welcome", "");
+                    } else {
+                        self.stay("registration", "Please choose a different username!");
+                    }
+		        }
+
+                register(data, reg);
+                this.topTen();
+                this.switch("registration", "error", "");
+            }
+
+            handlePlayGameClick() {
+                this.switch("welcome", "game", "");
+            }            
+            
+            handleLogoutClick() {
+                this.switch("welcome", "login", "");
+            }
+
+            handleUpdateAccountClick() {
+                this.switch("welcome", "update", "");
+            }
+
+            handleUpdateClick() {
+                const data = {
+                    user: this.state.username,
+                    pass: this.state.password,
+                    email: this.state.email,
+                    birthday: this.state.birthday,
+                    year: this.state.year,
+                    lecture: this.state.lecture,
+                };
+                
+                const self = this;
+
+                var upd = function(result) {
+                    if (result) {
+                        self.switch("update", "login", "");
+                    } else {
+                        self.stay("update", "There was a server side error!");
+                    }
+                }
+                
+                updateProfile(data, upd);
+                this.switch("update", "error", "");
+            }
+
+            handleDeleteAccountClick() {
+                this.switch("welcome", "delete", "");
+            }
+
+            handleDeleteClick() {
+                const data = {
+                    user: this.state.username,
+                    pass: this.state.password,
+                };
+
+                const self = this;
+
+                var del = function(result) {
+                    if (result) {
+                        self.switch("delete", "login", "");
+                    } else {
+                        self.stay("delete", "Your password is wrong!");
+                    }
+		        }
+
+                verifyPassword(data, del, "");
+                this.switch("delete", "error", "");
+            }
+
+            handleBackToWelcomeClick() {
+                this.setState({
+                    login: false,
+                    registration: false,
+                    welcome: true,
+                    update: false,
+                    delete: false,
+                    game: false,
+		            error: false,
+                });
+            }
+            
+            handleLeaveGameClick() {
+                leaveGame();
+                this.handleScore();
+            }
+
+            render(props) {
+                let screen;
+
+                if (this.state.login) {
+                    screen = <Login 
+                        parentProps={this.props} 
+                        handleUsernameChange={this.handleUsernameChange}
+                        handlePasswordChange={this.handlePasswordChange}
+                        handleLoginClick={this.handleLoginClick}
+                        handleRegistrationClick={this.handleRegistrationClick}
+	    		        errorMessage={this.state.errorMessage}
+                    />;
+                } else if (this.state.registration) {
+                    screen = <Registration
+                        parentProps={this.props}
+                        handleUsernameChange={this.handleUsernameChange}
+                        handlePasswordChange={this.handlePasswordChange}
+                        handleEmailChange={this.handleEmailChange}
+                        handleBirthdayChange={this.handleBirthdayChange}
+                        handleYearChange={this.handleYearChange}
+                        handleLectureChange={this.handleLectureChange}
+                        handleBackToLoginClick={this.handleBackToLoginClick}
+                        handleRegisterClick={this.handleRegisterClick}
+                        errorMessage={this.state.errorMessage}
+                    />;
+                } else if (this.state.welcome) {
+                    screen = <Welcome 
+                        parentProps={this.props}
+                        handlePlayGameClick={this.handlePlayGameClick}
+                        handleLogoutClick={this.handleLogoutClick}
+                        handleUpdateAccountClick={this.handleUpdateAccountClick}
+                        handleDeleteAccountClick={this.handleDeleteAccountClick}
+                        parentState={this.state}
+                    />
+                } else if (this.state.game) {
+                    screen = <Game
+                        parentProps={this.props}
+                        handleLeaveGameClick={this.handleLeaveGameClick} 
+                    />;
+                    console.log("joining game");
+                    joinGame(this);
+                } else if (this.state.update) {
+                    screen = <Update
+                        parentProps={this.props}
+                        handlePasswordChange={this.handlePasswordChange}
+                        handleEmailChange={this.handleEmailChange}
+                        handleBirthdayChange={this.handleBirthdayChange}
+                        handleYearChange={this.handleYearChange}
+                        handleLectureChange={this.handleLectureChange}
+                        handleBackToWelcomeClick={this.handleBackToWelcomeClick}
+                        handleUpdateClick={this.handleUpdateClick}
+                        errorMessage={this.state.errorMessage}
+                    />;
+                } else if (this.state.delete) {
+                    screen = <Delete
+                        parentProps={this.props}
+                        handlePasswordChange={this.handlePasswordChange}
+                        handleBackToWelcomeClick={this.handleBackToWelcomeClick} 
+                        handleDeleteClick={this.handleDeleteClick}
+                        errorMessage={this.state.errorMessage}
+                    />;
+                } else {
+                    screen = <h1></h1>;
+                }
+
+                return (
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Default parentProps={this.props} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            {screen}
+                        </Grid>
+                    </Grid>
+                );
+            }
+        }
+        
+        const Root = withStyles(styles)(App);
+        ReactDOM.render(
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Root />
+            </ThemeProvider>, 
+            document.getElementById("root")
+        );
+    </script>
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+
+</html>
